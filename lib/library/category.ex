@@ -4,6 +4,8 @@ defmodule Library.Category do
 
   schema "categories" do
     field :name, :string
+
+    timestamps()
   end
 
   def changeset(struct, params) do
