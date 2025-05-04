@@ -10,6 +10,7 @@ defmodule AlchemistLibrary.Application do
     children = [
       # Starts a worker by calling: AlchemistLibrary.Worker.start_link(arg)
       # {AlchemistLibrary.Worker, arg}
+      Library.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
