@@ -7,4 +7,4 @@ config :alchemist_library, Library.Repo,
   hostname: "localhost"
 
 config :alchemist_library,
-      ecto_repos: [Library.Repo]
+  ecto_repos: [Library.Repo]
