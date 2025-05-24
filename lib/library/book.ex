@@ -31,9 +31,13 @@ defmodule Library.Book do
     |> Library.Repo.insert()
   end
 
-  def get_all() do
-    query = from(Library.Book)
-    Library.Repo.all(query)
+  def get_all(filters \\ %{}) do
+    Enum.reduce(filters, Library.Book, fn
+      {:min_price, min_price}, query -> from b in query, where: b.price >= ^min_price
+      {:max_price, max_price}, query -> from b in query, where: b.price <= ^max_price
+      _, query -> query
+    end)
+    |> Library.Repo.all()
   end
 
   def get_by_title(title) do
