@@ -45,8 +45,16 @@ defmodule Library.Category do
     end
   end
 
-  def delete_category(name) do
-    category = get_by_name(name)
-    Library.Repo.delete(category)
+  def delete_category(id) do
+    with %Library.Category{} = category <- Library.Repo.get(Library.Category, id),
+         {:ok, deleted_category} <- Library.Repo.delete(category) do
+      {:ok, deleted_category}
+    else
+      nil ->
+        {:error, :not_found}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 end
