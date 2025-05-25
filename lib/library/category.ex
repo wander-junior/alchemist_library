@@ -32,10 +32,17 @@ defmodule Library.Category do
   end
 
   def update_category(id, new_category) do
-    category = Library.Repo.get!(Library.Category, id)
-    category = change(category, name: new_category)
+    with %Library.Category{} = category <- Library.Repo.get(Library.Category, id),
+         changeset = Library.Category.changeset(category, new_category),
+         {:ok, updated_category} <- Library.Repo.update(changeset) do
+      {:ok, updated_category}
+    else
+      nil ->
+        {:error, :not_found}
 
-    Library.Repo.update(category)
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def delete_category(name) do

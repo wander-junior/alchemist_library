@@ -32,14 +32,29 @@ defmodule Library.Author do
   end
 
   def update_author(id, new_author) do
-    author = Library.Repo.get!(Library.Author, id)
-    author = change(author, name: new_author)
+    with %Library.Author{} = author <- Library.Repo.get(Library.Author, id),
+         changeset = Library.Author.changeset(author, new_author),
+         {:ok, updated_author} <- Library.Repo.update(changeset) do
+      {:ok, updated_author}
+    else
+      nil ->
+        {:error, :not_found}
 
-    Library.Repo.update(author)
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def delete_author(id) do
-    author = Library.Repo.get!(Library.Author, id)
-    Library.Repo.delete(author)
+    with %Library.Author{} = author <- Library.Repo.get(Library.Author, id),
+         {:ok, deleted_author} <- Library.Repo.delete(author) do
+      {:ok, deleted_author}
+    else
+      nil ->
+        {:error, :not_found}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 end
