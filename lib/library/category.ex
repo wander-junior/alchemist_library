@@ -3,6 +3,7 @@ defmodule Library.Category do
   import Ecto.Changeset
   import Ecto.Query
 
+  @derive {Jason.Encoder, only: [:id, :name]}
   schema "categories" do
     field(:name, :string)
 
@@ -47,6 +48,19 @@ defmodule Library.Category do
 
   def delete_category(id) do
     with %Library.Category{} = category <- Library.Repo.get(Library.Category, id),
+         {:ok, deleted_category} <- Library.Repo.delete(category) do
+      {:ok, deleted_category}
+    else
+      nil ->
+        {:error, :not_found}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  def delete_category_by_name(name) do
+    with %Library.Category{} = category <- Library.Category.get_by_name(name),
          {:ok, deleted_category} <- Library.Repo.delete(category) do
       {:ok, deleted_category}
     else

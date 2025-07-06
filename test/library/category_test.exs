@@ -91,16 +91,35 @@ defmodule Library.CategoryTest do
   end
 
   describe "delete_category/1" do
-    test "should return error when author does not exists" do
+    test "should return error when category does not exists" do
       {status, res} = Library.Category.delete_category(0)
 
       assert status == :error
       assert res == :not_found
     end
 
-    test "should delete author when it exists" do
+    test "should delete category when it exists" do
       {:ok, category} = Library.Category.create_category(%{name: "Teste"})
       {status, res} = Library.Category.delete_category(category.id)
+      all_categories = Library.Category.get_all()
+
+      assert status == :ok
+      assert res.name == "Teste"
+      assert length(all_categories) == 0
+    end
+  end
+
+  describe "delete_category_by_name/1" do
+    test "should return error when category name does not exists" do
+      {status, res} = Library.Category.delete_category_by_name("Nome fictício")
+
+      assert status == :error
+      assert res == :not_found
+    end
+
+    test "should delete category when its name exists" do
+      Library.Category.create_category(%{name: "Teste"})
+      {status, res} = Library.Category.delete_category_by_name("Teste")
       all_categories = Library.Category.get_all()
 
       assert status == :ok
