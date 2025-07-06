@@ -3,6 +3,7 @@ defmodule Library.Author do
   import Ecto.Changeset
   import Ecto.Query
 
+  @derive {Jason.Encoder, only: [:id, :name]}
   schema "authors" do
     field(:name, :string)
 
@@ -23,8 +24,8 @@ defmodule Library.Author do
   end
 
   def get_all() do
-    query = from(Library.Author)
-    Library.Repo.all(query)
+    from(Library.Author)
+    |> Library.Repo.all()
   end
 
   def get_by_name(name) do
@@ -47,6 +48,19 @@ defmodule Library.Author do
 
   def delete_author(id) do
     with %Library.Author{} = author <- Library.Repo.get(Library.Author, id),
+         {:ok, deleted_author} <- Library.Repo.delete(author) do
+      {:ok, deleted_author}
+    else
+      nil ->
+        {:error, :not_found}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  def delete_author_by_name(name) do
+    with %Library.Author{} = author <- Library.Author.get_by_name(name),
          {:ok, deleted_author} <- Library.Repo.delete(author) do
       {:ok, deleted_author}
     else

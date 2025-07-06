@@ -7,6 +7,7 @@ defmodule AlchemistLibrary.Router do
   plug(:dispatch)
 
   forward "/api/category", to: AlchemistLibrary.CategoryRouter
+  forward "/api/author", to: AlchemistLibrary.AuthorRouter
 
   match _ do
     send_resp(conn, 404, "Invalid Route")

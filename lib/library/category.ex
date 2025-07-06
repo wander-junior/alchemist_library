@@ -24,8 +24,8 @@ defmodule Library.Category do
   end
 
   def get_all() do
-    query = from(Library.Category)
-    Library.Repo.all(query)
+    from(Library.Category)
+    |> Library.Repo.all()
   end
 
   def get_by_name(name) do

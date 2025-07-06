@@ -108,4 +108,23 @@ defmodule Library.AuthorTest do
       assert length(all_authors) == 0
     end
   end
+
+  describe "delete_author_by_name/1" do
+    test "should return error when author name does not exists" do
+      {status, res} = Library.Author.delete_author_by_name("Nome fictício")
+
+      assert status == :error
+      assert res == :not_found
+    end
+
+    test "should delete author when its name exists" do
+      Library.Author.create_author(%{name: "Teste"})
+      {status, res} = Library.Author.delete_author_by_name("Teste")
+      all_categories = Library.Author.get_all()
+
+      assert status == :ok
+      assert res.name == "Teste"
+      assert length(all_categories) == 0
+    end
+  end
 end
