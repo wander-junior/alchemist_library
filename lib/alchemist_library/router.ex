@@ -6,8 +6,9 @@ defmodule AlchemistLibrary.Router do
   plug(Plug.Parsers, parsers: [:urlencoded, :multipart, :json], json_decoder: Jason)
   plug(:dispatch)
 
-  forward "/api/category", to: AlchemistLibrary.CategoryRouter
-  forward "/api/author", to: AlchemistLibrary.AuthorRouter
+  forward("/api/category", to: AlchemistLibrary.CategoryRouter)
+  forward("/api/author", to: AlchemistLibrary.AuthorRouter)
+  forward("/api/book", to: AlchemistLibrary.BookRouter)
 
   match _ do
     send_resp(conn, 404, "Invalid Route")

@@ -3,6 +3,7 @@ defmodule Library.Book do
   import Ecto.Changeset
   import Ecto.Query
 
+  @derive {Jason.Encoder, only: [:id, :title, :isbn, :price, :author, :category]}
   schema "books" do
     field(:title, :string)
     field(:isbn, :string)
@@ -34,14 +35,23 @@ defmodule Library.Book do
   end
 
   def create_book(attrs) do
-    %__MODULE__{}
-    |> Library.Book.changeset(attrs)
-    |> Library.Repo.insert()
+    changeset = Library.Book.changeset(%Library.Book{}, attrs)
+
+    case Library.Repo.insert(changeset) do
+      {:ok, book} ->
+        book = Library.Repo.preload(book, [:author, :category])
+        {:ok, book}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def get_all(filters \\ %{}) do
     price_filter(Library.Book, filters)
     |> Library.Repo.all()
+    |> Library.Repo.preload(:author)
+    |> Library.Repo.preload(:category)
   end
 
   def get_by_title(title) do
@@ -49,6 +59,8 @@ defmodule Library.Book do
       where: ilike(b.title, ^"%#{String.replace(title, "%", "\\%")}%")
     )
     |> Library.Repo.all()
+    |> Library.Repo.preload(:author)
+    |> Library.Repo.preload(:category)
   end
 
   def get_by_authors_name(name, filters \\ %{}) do
@@ -59,6 +71,7 @@ defmodule Library.Book do
     )
     |> price_filter(filters)
     |> Library.Repo.all()
+    |> Library.Repo.preload(:category)
   end
 
   def get_by_category_name(name, filters \\ %{}) do
@@ -69,13 +82,16 @@ defmodule Library.Book do
     )
     |> price_filter(filters)
     |> Library.Repo.all()
+    |> Library.Repo.preload(:author)
+    |> Library.Repo.preload(:category)
   end
 
   def update_book(id, new_book) do
     with %Library.Book{} = book <- Library.Repo.get(Library.Book, id),
          changeset = Library.Book.changeset(book, new_book),
-         {:ok, updated_book} <- Library.Repo.update(changeset) do
-      {:ok, updated_book}
+         {:ok, updated_book} <- Library.Repo.update(changeset),
+         preloaded_book <- Library.Repo.preload(updated_book, [:author, :category]) do
+      {:ok, preloaded_book}
     else
       nil ->
         {:error, :not_found}
@@ -87,8 +103,9 @@ defmodule Library.Book do
 
   def delete_book(id) do
     with %Library.Book{} = book <- Library.Repo.get(Library.Book, id),
-         {:ok, deleted_book} <- Library.Repo.delete(book) do
-      {:ok, deleted_book}
+         {:ok, deleted_book} <- Library.Repo.delete(book),
+         preloaded_book <- Library.Repo.preload(deleted_book, [:author, :category]) do
+      {:ok, preloaded_book}
     else
       nil ->
         {:error, :not_found}

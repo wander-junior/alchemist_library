@@ -1,5 +1,5 @@
 defmodule AlchemistLibrary.CategoryRouter do
-    use Plug.Router
+  use Plug.Router
   use Plug.ErrorHandler
 
   plug(:match)
@@ -58,9 +58,7 @@ defmodule AlchemistLibrary.CategoryRouter do
         conn
         |> put_resp_content_type("application/json")
         |> send_resp(422, Jason.encode!(%{error: "Update failed", details: changeset}))
-
     end
-
   end
 
   delete "/remove" do

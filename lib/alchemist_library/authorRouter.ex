@@ -58,9 +58,7 @@ defmodule AlchemistLibrary.AuthorRouter do
         conn
         |> put_resp_content_type("application/json")
         |> send_resp(422, Jason.encode!(%{error: "Update failed", details: changeset}))
-
     end
-
   end
 
   delete "/remove" do
