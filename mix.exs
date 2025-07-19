@@ -33,7 +33,10 @@ defmodule AlchemistLibrary.MixProject do
       {:cowboy, "~> 2.6"},
       {:plug, "~> 1.7"},
       {:plug_cowboy, "~> 2.0"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:nebulex, "~> 2.5"},
+      {:nebulex_redis_adapter, "~> 2.3"},
+      {:redix, ">= 0.0.0"}
     ]
   end
 end

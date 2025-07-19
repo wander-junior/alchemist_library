@@ -25,11 +25,27 @@ defmodule AlchemistLibrary.AuthorRouter do
   get "/get" do
     %{"name" => name} = conn.params
 
-    author = Jason.encode!(Library.Author.get_by_name(name))
+    key = {:author_by_name, name}
+
+    author =
+      case AlchemistLibrary.Cache.get(key) do
+        nil ->
+          case Library.Author.get_by_name(name) do
+            nil ->
+              nil
+
+            result ->
+              AlchemistLibrary.Cache.put(key, result, ttl: :timer.minutes(10))
+              result
+          end
+
+        cached_result ->
+          cached_result
+      end
 
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, author)
+    |> send_resp(200, Jason.encode!(author))
   end
 
   get "/get_all" do

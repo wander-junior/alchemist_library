@@ -25,11 +25,27 @@ defmodule AlchemistLibrary.CategoryRouter do
   get "/get" do
     %{"name" => name} = conn.params
 
-    category = Jason.encode!(Library.Category.get_by_name(name))
+    key = {:category_by_name, name}
+
+    category =
+      case AlchemistLibrary.Cache.get(key) do
+        nil ->
+          case Library.Category.get_by_name(name) do
+            nil ->
+              nil
+
+            result ->
+              AlchemistLibrary.Cache.put(key, result, ttl: :timer.minutes(10))
+              result
+          end
+
+        cached_result ->
+          cached_result
+      end
 
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, category)
+    |> send_resp(200, Jason.encode!(category))
   end
 
   get "/get_all" do
