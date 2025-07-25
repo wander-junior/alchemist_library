@@ -7,94 +7,22 @@ defmodule AlchemistLibrary.AuthorRouter do
   plug(:dispatch)
 
   post "/add" do
-    %{"name" => name} = conn.body_params
-
-    case Library.Author.create_author(%{name: name}) do
-      {:ok, author} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(200, Jason.encode!(author))
-
-      {:error, reason} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(400, Jason.encode!(%{error: reason}))
-    end
+    AlchemistLibrary.AuthorController.create(conn, conn.body_params)
   end
 
   get "/get" do
-    %{"name" => name} = conn.params
-
-    key = {:author_by_name, name}
-
-    author =
-      case AlchemistLibrary.Cache.get(key) do
-        nil ->
-          case Library.Author.get_by_name(name) do
-            nil ->
-              nil
-
-            result ->
-              AlchemistLibrary.Cache.put(key, result, ttl: :timer.minutes(10))
-              result
-          end
-
-        cached_result ->
-          cached_result
-      end
-
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(author))
+    AlchemistLibrary.AuthorController.read(conn, conn.body_params)
   end
 
   get "/get_all" do
-    authors = Jason.encode!(Library.Author.get_all())
-
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, authors)
+    AlchemistLibrary.AuthorController.readAll(conn)
   end
 
   put "/change" do
-    %{"id" => id, "name" => name} = conn.body_params
-
-    case Library.Author.update_author(id, %{name: name}) do
-      {:ok, author} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(200, Jason.encode!(author))
-
-      {:error, :not_found} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(404, Jason.encode!(%{error: "Author not found"}))
-
-      {:error, changeset} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(422, Jason.encode!(%{error: "Update failed", details: changeset}))
-    end
+    AlchemistLibrary.AuthorController.update(conn, conn.body_params)
   end
 
   delete "/remove" do
-    %{"name" => name} = conn.params
-
-    case Library.Author.delete_author_by_name(name) do
-      {:ok, author} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(200, Jason.encode!(author))
-
-      {:error, :not_found} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(404, Jason.encode!(%{error: "Author not found"}))
-
-      {:error, changeset} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(422, Jason.encode!(%{error: "Deletion failed", details: changeset}))
-    end
+    AlchemistLibrary.AuthorController.delete(conn, conn.params)
   end
 end

@@ -1,5 +1,7 @@
 defmodule Library.Book do
   use Ecto.Schema
+  use Nebulex.Caching.Decorators
+
   import Ecto.Changeset
   import Ecto.Query
 
@@ -54,6 +56,11 @@ defmodule Library.Book do
     |> Library.Repo.preload(:category)
   end
 
+  @decorate cacheable(
+              cache: AlchemistLibrary.Cache,
+              key: {:book_by_title, title},
+              opts: [ttl: 60_000]
+            )
   def get_by_title(title) do
     from(b in Library.Book,
       where: ilike(b.title, ^"%#{String.replace(title, "%", "\\%")}%")

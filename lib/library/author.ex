@@ -1,5 +1,7 @@
 defmodule Library.Author do
   use Ecto.Schema
+  use Nebulex.Caching.Decorators
+
   import Ecto.Changeset
   import Ecto.Query
 
@@ -28,6 +30,11 @@ defmodule Library.Author do
     |> Library.Repo.all()
   end
 
+  @decorate cacheable(
+            cache: AlchemistLibrary.Cache,
+            key: {:author_by_name, name},
+            opts: [ttl: 60_000]
+          )
   def get_by_name(name) do
     Library.Repo.get_by(Library.Author, name: name)
   end
