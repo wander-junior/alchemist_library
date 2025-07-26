@@ -1,4 +1,4 @@
-defmodule :"Elixir.library.Repo.Migrations.AddTimestampsToBooks" do
+defmodule :"Elixir.AlchemistLibrary.Repo.Migrations.AddTimestampsToBooks" do
   use Ecto.Migration
 
   def change do

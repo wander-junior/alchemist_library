@@ -1,15 +1,16 @@
 defmodule AlchemistLibrary.AuthorController do
   alias AlchemistLibrary.JsonResponse
+  alias AlchemistLibrary.Library.Author
 
   def create(conn, %{"name" => name}) do
-    case Library.Author.create_author(%{name: name}) do
+    case Author.create_author(%{name: name}) do
       {:ok, author} -> JsonResponse.send(conn, 201, author)
       {:error, reason} -> JsonResponse.send(conn, 400, %{error: reason})
     end
   end
 
   def read(conn, %{"name" => name}) do
-    case Library.Author.get_by_name(name) do
+    case Author.get_by_name(name) do
       nil ->
         JsonResponse.send(conn, 404, %{error: "Author not found"})
 
@@ -19,13 +20,13 @@ defmodule AlchemistLibrary.AuthorController do
   end
 
   def readAll(conn) do
-    authors = Library.Author.get_all()
+    authors = Author.get_all()
 
     JsonResponse.send(conn, 200, authors)
   end
 
   def update(conn, %{"id" => id, "name" => name}) do
-    case Library.Author.update_author(id, %{name: name}) do
+    case Author.update_author(id, %{name: name}) do
       {:ok, author} ->
         JsonResponse.send(conn, 200, author)
 
@@ -38,7 +39,7 @@ defmodule AlchemistLibrary.AuthorController do
   end
 
   def delete(conn, %{"name" => name}) do
-    case Library.Author.delete_author_by_name(name) do
+    case Author.delete_author_by_name(name) do
       {:ok, author} ->
         JsonResponse.send(conn, 200, author)
 

@@ -1,15 +1,16 @@
 defmodule AlchemistLibrary.BookController do
   alias AlchemistLibrary.JsonResponse
+  alias AlchemistLibrary.Library.Book
 
   def create(conn, body_params) do
-    case Library.Book.create_book(body_params) do
+    case Book.create_book(body_params) do
       {:ok, book} -> JsonResponse.send(conn, 201, book)
       {:error, reason} -> JsonResponse.send(conn, 400, %{error: reason})
     end
   end
 
   def read(conn, %{"title" => title}) do
-    case Library.Book.get_by_title(title) do
+    case Book.get_by_title(title) do
       nil ->
         JsonResponse.send(conn, 404, %{error: "Book not found"})
 
@@ -24,7 +25,7 @@ defmodule AlchemistLibrary.BookController do
       |> build_price_filters()
 
     books =
-      Library.Book.get_all(filters)
+      Book.get_all(filters)
 
     JsonResponse.send(conn, 200, books)
   end
@@ -35,7 +36,7 @@ defmodule AlchemistLibrary.BookController do
       |> build_price_filters()
 
     books =
-      Library.Book.get_by_authors_name(params.name, filters)
+      Book.get_by_authors_name(params.name, filters)
 
     JsonResponse.send(conn, 200, books)
   end
@@ -46,7 +47,7 @@ defmodule AlchemistLibrary.BookController do
       |> build_price_filters()
 
     books =
-      Jason.encode!(Library.Book.get_by_category_name(params.category, filters))
+      Jason.encode!(Book.get_by_category_name(params.category, filters))
 
     JsonResponse.send(conn, 200, books)
   end
@@ -62,7 +63,7 @@ defmodule AlchemistLibrary.BookController do
     } =
       body_params
 
-    case Library.Book.update_book(id, %{
+    case Book.update_book(id, %{
            title: title,
            isbn: isbn,
            price: price,
@@ -81,7 +82,7 @@ defmodule AlchemistLibrary.BookController do
   end
 
   def remove(conn, %{"id" => id}) do
-    case Library.Book.delete_book(id) do
+    case Book.delete_book(id) do
       {:ok, book} ->
         JsonResponse.send(conn, 200, book)
 

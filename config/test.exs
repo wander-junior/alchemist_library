@@ -1,6 +1,6 @@
 import Config
 
-config :alchemist_library, Library.Repo,
+config :alchemist_library, AlchemistLibrary.Repo,
   username: "postgres",
   password: "1234",
   database: "library_test",

@@ -1,4 +1,4 @@
-defmodule :"Elixir.library.Repo.Migrations.CreateAuthors" do
+defmodule :"Elixir.AlchemistLibrary.Repo.Migrations.CreateAuthors" do
   use Ecto.Migration
 
   def change do

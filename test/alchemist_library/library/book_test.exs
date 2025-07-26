@@ -1,14 +1,14 @@
 defmodule Library.BookTest do
   use ExUnit.Case
-  use Library.RepoCase
+  use AlchemistLibrary.RepoCase
 
   describe "create_book/1" do
     test "should create book when all atrributes are valid" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
       {status, response} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "Nome do livro",
           isbn: "0-6672-2445-9",
           price: 1234,
@@ -25,11 +25,11 @@ defmodule Library.BookTest do
     end
 
     test "should return error when title is invalid" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
       {status, _} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "",
           isbn: "0-6672-2445-9",
           price: 1234,
@@ -41,11 +41,11 @@ defmodule Library.BookTest do
     end
 
     test "should return error when isbn is invalid" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
       {status, _} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "Nome do livro",
           isbn: "0-6672-2445-",
           author_id: author.id,
@@ -56,11 +56,11 @@ defmodule Library.BookTest do
     end
 
     test "should initialize price with 0 when there is no price" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
       {status, res} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "Nome do livro",
           isbn: "0-6672-2445-9",
           author_id: author.id,
@@ -72,11 +72,11 @@ defmodule Library.BookTest do
     end
 
     test "should return error when price is smaller than 0" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
       {status, _} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "Nome do livro",
           isbn: "0-6672-2445-9",
           price: -1,
@@ -88,10 +88,10 @@ defmodule Library.BookTest do
     end
 
     test "should return error when category is invalid" do
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
       {status, _} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "Nome do livro",
           isbn: "0-6672-2445-9",
           price: 123,
@@ -103,10 +103,10 @@ defmodule Library.BookTest do
     end
 
     test "should return error when author is invalid" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
 
       {status, _} =
-        Library.Book.create_book(%{
+        AlchemistLibrary.Library.Book.create_book(%{
           title: "Nome do livro",
           isbn: "0-6672-2445-9",
           price: 1232,
@@ -120,16 +120,16 @@ defmodule Library.BookTest do
 
   describe "get_all" do
     test "should return empty list when there is no book" do
-      res = Library.Book.get_all()
+      res = AlchemistLibrary.Library.Book.get_all()
 
       assert length(res) == 0
     end
 
     test "should get all books" do
-      {:ok, category} = Library.Category.create_category(%{name: "Categoria"})
-      {:ok, author} = Library.Author.create_author(%{name: "Autor"})
+      {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})
+      {:ok, author} = AlchemistLibrary.Library.Author.create_author(%{name: "Autor"})
 
-      Library.Book.create_book(%{
+      AlchemistLibrary.Library.Book.create_book(%{
         title: "teste",
         isbn: "0-6672-2445-9",
         price: 1234,
@@ -137,7 +137,7 @@ defmodule Library.BookTest do
         category_id: category.id
       })
 
-      Library.Book.create_book(%{
+      AlchemistLibrary.Library.Book.create_book(%{
         title: "teste2",
         isbn: "1-6672-2445-9",
         price: 1234,
@@ -145,7 +145,7 @@ defmodule Library.BookTest do
         category_id: category.id
       })
 
-      res = Library.Book.get_all()
+      res = AlchemistLibrary.Library.Book.get_all()
 
       assert length(res) == 2
       assert Enum.any?(res, fn item -> item.title == "teste" end)

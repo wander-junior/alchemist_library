@@ -1,4 +1,4 @@
-defmodule Library.Repo.Migrations.CategoryNameUnique do
+defmodule AlchemistLibrary.Repo.Migrations.CategoryNameUnique do
   use Ecto.Migration
 
   def change do

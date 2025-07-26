@@ -1,7 +1,7 @@
 import Config
 
 config :alchemist_library,
-  ecto_repos: [Library.Repo]
+  ecto_repos: [AlchemistLibrary.Repo]
 
 config :alchemist_library, AlchemistLibrary.Cache,
   adapter: NebulexRedisAdapter,

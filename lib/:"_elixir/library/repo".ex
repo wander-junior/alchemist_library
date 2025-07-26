@@ -1,4 +1,4 @@
-defmodule :"Elixir.library.Repo" do
+defmodule :"Elixir.AlchemistLibrary.Repo" do
   use Ecto.Repo,
     otp_app: :alchemist_library,
     adapter: Ecto.Adapters.Postgres

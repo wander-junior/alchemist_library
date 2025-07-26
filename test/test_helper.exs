@@ -1,3 +1,3 @@
-Ecto.Adapters.SQL.Sandbox.mode(Library.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(AlchemistLibrary.Repo, :manual)
 
 ExUnit.start()

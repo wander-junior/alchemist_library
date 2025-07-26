@@ -1,4 +1,4 @@
-defmodule Library.Repo.Migrations.AddUniqueConstraints do
+defmodule AlchemistLibrary.Repo.Migrations.AddUniqueConstraints do
   use Ecto.Migration
 
   def change do

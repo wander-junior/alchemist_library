@@ -12,7 +12,7 @@ defmodule AlchemistLibrary.Application do
       # Starts a worker by calling: AlchemistLibrary.Worker.start_link(arg)
       # {AlchemistLibrary.Worker, arg}
       AlchemistLibrary.Cache,
-      Library.Repo,
+      AlchemistLibrary.Repo,
       {Plug.Cowboy, scheme: :http, plug: AlchemistLibrary.Router, options: [port: 8080]}
     ]
 
