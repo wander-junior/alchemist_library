@@ -2,6 +2,11 @@ defmodule Library.CategoryTest do
   use ExUnit.Case
   use AlchemistLibrary.RepoCase
 
+  setup do
+    AlchemistLibrary.Cache.flush()
+    :ok
+  end
+
   describe "create_category/1" do
     test "should create category when all atrributes are valid" do
       {status, response} = AlchemistLibrary.Library.Category.create_category(%{name: "Teste"})
@@ -83,7 +88,9 @@ defmodule Library.CategoryTest do
 
     test "should update category's name" do
       {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Teste"})
-      {status, res} = AlchemistLibrary.Library.Category.update_category(category.id, %{name: "Novo Teste"})
+
+      {status, res} =
+        AlchemistLibrary.Library.Category.update_category(category.id, %{name: "Novo Teste"})
 
       assert status == :ok
       assert res.name == "Novo Teste"
@@ -119,7 +126,10 @@ defmodule Library.CategoryTest do
 
     test "should delete category when its name exists" do
       AlchemistLibrary.Library.Category.create_category(%{name: "Teste de remoção"})
-      {status, res} = AlchemistLibrary.Library.Category.delete_category_by_name("Teste de remoção")
+
+      {status, res} =
+        AlchemistLibrary.Library.Category.delete_category_by_name("Teste de remoção")
+
       all_categories = AlchemistLibrary.Library.Category.get_all()
 
       assert status == :ok

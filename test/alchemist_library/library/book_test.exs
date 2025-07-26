@@ -2,6 +2,11 @@ defmodule Library.BookTest do
   use ExUnit.Case
   use AlchemistLibrary.RepoCase
 
+  setup do
+    AlchemistLibrary.Cache.flush()
+    :ok
+  end
+
   describe "create_book/1" do
     test "should create book when all atrributes are valid" do
       {:ok, category} = AlchemistLibrary.Library.Category.create_category(%{name: "Categoria"})

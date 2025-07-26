@@ -5,6 +5,11 @@ defmodule AlchemistLibrary.Library.AuthorTest do
   use ExUnit.Case
   use AlchemistLibrary.RepoCase
 
+  setup do
+    AlchemistLibrary.Cache.flush()
+    :ok
+  end
+
   describe "create_author/1" do
     test "should create author when all atrributes are valid" do
       {status, response} = Author.create_author(%{name: "Teste"})
