@@ -1,4 +1,4 @@
-defmodule Library.Repo do
+defmodule AlchemistLibrary.Repo do
   use Ecto.Repo,
     otp_app: :alchemist_library,
     adapter: Ecto.Adapters.Postgres

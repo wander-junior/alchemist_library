@@ -1,4 +1,7 @@
-defmodule Library.Author do
+defmodule AlchemistLibrary.Library.Author do
+  alias AlchemistLibrary.{Repo, Library, Cache}
+  alias Library.Author
+
   use Ecto.Schema
   use Nebulex.Caching.Decorators
 
@@ -21,28 +24,29 @@ defmodule Library.Author do
 
   def create_author(attrs) do
     %__MODULE__{}
-    |> Library.Author.changeset(attrs)
-    |> Library.Repo.insert()
+    |> Author.changeset(attrs)
+    |> Repo.insert()
   end
 
   def get_all() do
-    from(Library.Author)
-    |> Library.Repo.all()
+    from(Author)
+    |> Repo.all()
   end
 
   @decorate cacheable(
-            cache: AlchemistLibrary.Cache,
-            key: {:author_by_name, name},
-            opts: [ttl: 60_000]
-          )
+              cache: Cache,
+              key: {:author_by_name, name},
+              opts: [ttl: 60_000]
+            )
   def get_by_name(name) do
-    Library.Repo.get_by(Library.Author, name: name)
+    Repo.get_by(Author, name: name)
   end
 
   def update_author(id, new_author) do
-    with %Library.Author{} = author <- Library.Repo.get(Library.Author, id),
-         changeset = Library.Author.changeset(author, new_author),
-         {:ok, updated_author} <- Library.Repo.update(changeset) do
+    with %Author{} = author <-
+           Repo.get(Author, id),
+         changeset = Author.changeset(author, new_author),
+         {:ok, updated_author} <- Repo.update(changeset) do
       {:ok, updated_author}
     else
       nil ->
@@ -54,8 +58,9 @@ defmodule Library.Author do
   end
 
   def delete_author(id) do
-    with %Library.Author{} = author <- Library.Repo.get(Library.Author, id),
-         {:ok, deleted_author} <- Library.Repo.delete(author) do
+    with %Author{} = author <-
+           Repo.get(Author, id),
+         {:ok, deleted_author} <- Repo.delete(author) do
       {:ok, deleted_author}
     else
       nil ->
@@ -67,8 +72,9 @@ defmodule Library.Author do
   end
 
   def delete_author_by_name(name) do
-    with %Library.Author{} = author <- Library.Author.get_by_name(name),
-         {:ok, deleted_author} <- Library.Repo.delete(author) do
+    with %Author{} = author <-
+           Author.get_by_name(name),
+         {:ok, deleted_author} <- Repo.delete(author) do
       {:ok, deleted_author}
     else
       nil ->

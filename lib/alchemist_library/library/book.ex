@@ -1,4 +1,7 @@
-defmodule Library.Book do
+defmodule AlchemistLibrary.Library.Book do
+  alias AlchemistLibrary.{Cache, Repo}
+  alias AlchemistLibrary.Library.{Author, Category, Book}
+
   use Ecto.Schema
   use Nebulex.Caching.Decorators
 
@@ -11,8 +14,8 @@ defmodule Library.Book do
     field(:isbn, :string)
     field(:price, :integer, default: 0)
 
-    belongs_to(:author, Library.Author)
-    belongs_to(:category, Library.Category)
+    belongs_to(:author, Author)
+    belongs_to(:category, Category)
 
     timestamps()
   end
@@ -37,11 +40,11 @@ defmodule Library.Book do
   end
 
   def create_book(attrs) do
-    changeset = Library.Book.changeset(%Library.Book{}, attrs)
+    changeset = Book.changeset(%Book{}, attrs)
 
-    case Library.Repo.insert(changeset) do
+    case Repo.insert(changeset) do
       {:ok, book} ->
-        book = Library.Repo.preload(book, [:author, :category])
+        book = Repo.preload(book, [:author, :category])
         {:ok, book}
 
       {:error, changeset} ->
@@ -50,54 +53,54 @@ defmodule Library.Book do
   end
 
   def get_all(filters \\ %{}) do
-    price_filter(Library.Book, filters)
-    |> Library.Repo.all()
-    |> Library.Repo.preload(:author)
-    |> Library.Repo.preload(:category)
+    price_filter(Book, filters)
+    |> Repo.all()
+    |> Repo.preload(:author)
+    |> Repo.preload(:category)
   end
 
   @decorate cacheable(
-              cache: AlchemistLibrary.Cache,
+              cache: Cache,
               key: {:book_by_title, title},
               opts: [ttl: 60_000]
             )
   def get_by_title(title) do
-    from(b in Library.Book,
+    from(b in Book,
       where: ilike(b.title, ^"%#{String.replace(title, "%", "\\%")}%")
     )
-    |> Library.Repo.all()
-    |> Library.Repo.preload(:author)
-    |> Library.Repo.preload(:category)
+    |> Repo.all()
+    |> Repo.preload(:author)
+    |> Repo.preload(:category)
   end
 
   def get_by_authors_name(name, filters \\ %{}) do
-    from(b in Library.Book,
+    from(b in Book,
       join: a in assoc(b, :author),
       where: a.name == ^name,
       preload: [author: a]
     )
     |> price_filter(filters)
-    |> Library.Repo.all()
-    |> Library.Repo.preload(:category)
+    |> Repo.all()
+    |> Repo.preload(:category)
   end
 
   def get_by_category_name(name, filters \\ %{}) do
-    from(b in Library.Book,
+    from(b in Book,
       join: c in assoc(b, :category),
       where: c.name == ^name,
       preload: [category: c]
     )
     |> price_filter(filters)
-    |> Library.Repo.all()
-    |> Library.Repo.preload(:author)
-    |> Library.Repo.preload(:category)
+    |> Repo.all()
+    |> Repo.preload(:author)
+    |> Repo.preload(:category)
   end
 
   def update_book(id, new_book) do
-    with %Library.Book{} = book <- Library.Repo.get(Library.Book, id),
-         changeset = Library.Book.changeset(book, new_book),
-         {:ok, updated_book} <- Library.Repo.update(changeset),
-         preloaded_book <- Library.Repo.preload(updated_book, [:author, :category]) do
+    with %Book{} = book <- Repo.get(Library.Book, id),
+         changeset = Book.changeset(book, new_book),
+         {:ok, updated_book} <- Repo.update(changeset),
+         preloaded_book <- Repo.preload(updated_book, [:author, :category]) do
       {:ok, preloaded_book}
     else
       nil ->
@@ -109,9 +112,9 @@ defmodule Library.Book do
   end
 
   def delete_book(id) do
-    with %Library.Book{} = book <- Library.Repo.get(Library.Book, id),
-         {:ok, deleted_book} <- Library.Repo.delete(book),
-         preloaded_book <- Library.Repo.preload(deleted_book, [:author, :category]) do
+    with %Book{} = book <- Repo.get(Library.Book, id),
+         {:ok, deleted_book} <- Repo.delete(book),
+         preloaded_book <- Repo.preload(deleted_book, [:author, :category]) do
       {:ok, preloaded_book}
     else
       nil ->

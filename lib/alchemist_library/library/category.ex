@@ -1,4 +1,7 @@
-defmodule Library.Category do
+defmodule AlchemistLibrary.Library.Category do
+  alias AlchemistLibrary.{Repo, Library, Cache}
+  alias Library.Category
+
   use Ecto.Schema
   use Nebulex.Caching.Decorators
 
@@ -21,28 +24,28 @@ defmodule Library.Category do
 
   def create_category(attrs) do
     %__MODULE__{}
-    |> Library.Category.changeset(attrs)
-    |> Library.Repo.insert()
+    |> Category.changeset(attrs)
+    |> Repo.insert()
   end
 
   def get_all() do
-    from(Library.Category)
-    |> Library.Repo.all()
+    from(Category)
+    |> Repo.all()
   end
 
   @decorate cacheable(
-              cache: AlchemistLibrary.Cache,
+              cache: Cache,
               key: {:category_by_name, name},
               opts: [ttl: 60_000]
             )
   def get_by_name(name) do
-    Library.Repo.get_by(Library.Category, name: name)
+    Repo.get_by(Category, name: name)
   end
 
   def update_category(id, new_category) do
-    with %Library.Category{} = category <- Library.Repo.get(Library.Category, id),
-         changeset = Library.Category.changeset(category, new_category),
-         {:ok, updated_category} <- Library.Repo.update(changeset) do
+    with %Category{} = category <- Repo.get(Category, id),
+         changeset = Category.changeset(category, new_category),
+         {:ok, updated_category} <- Repo.update(changeset) do
       {:ok, updated_category}
     else
       nil ->
@@ -54,8 +57,8 @@ defmodule Library.Category do
   end
 
   def delete_category(id) do
-    with %Library.Category{} = category <- Library.Repo.get(Library.Category, id),
-         {:ok, deleted_category} <- Library.Repo.delete(category) do
+    with %Category{} = category <- Repo.get(Category, id),
+         {:ok, deleted_category} <- Repo.delete(category) do
       {:ok, deleted_category}
     else
       nil ->
@@ -67,8 +70,8 @@ defmodule Library.Category do
   end
 
   def delete_category_by_name(name) do
-    with %Library.Category{} = category <- Library.Category.get_by_name(name),
-         {:ok, deleted_category} <- Library.Repo.delete(category) do
+    with %Category{} = category <- Category.get_by_name(name),
+         {:ok, deleted_category} <- Repo.delete(category) do
       {:ok, deleted_category}
     else
       nil ->
