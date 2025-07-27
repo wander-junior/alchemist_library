@@ -1,2 +1,0 @@
-defmodule AlchemistLibrary do
-end
