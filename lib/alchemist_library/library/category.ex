@@ -24,7 +24,7 @@ defmodule AlchemistLibrary.Library.Category do
 
   def create_category(attrs) do
     %__MODULE__{}
-    |> Category.changeset(attrs)
+    |> changeset(attrs)
     |> Repo.insert()
   end
 
@@ -44,7 +44,7 @@ defmodule AlchemistLibrary.Library.Category do
 
   def update_category(id, new_category) do
     with %Category{} = category <- Repo.get(Category, id),
-         changeset = Category.changeset(category, new_category),
+         changeset = changeset(category, new_category),
          {:ok, updated_category} <- Repo.update(changeset) do
       {:ok, updated_category}
     else
@@ -70,8 +70,9 @@ defmodule AlchemistLibrary.Library.Category do
   end
 
   def delete_category_by_name(name) do
-    with %Category{} = category <- Category.get_by_name(name),
+    with %Category{} = category <- get_by_name(name),
          {:ok, deleted_category} <- Repo.delete(category) do
+      Cache.delete({:category_by_name, name})
       {:ok, deleted_category}
     else
       nil ->

@@ -45,7 +45,7 @@ defmodule AlchemistLibrary.Library.Author do
   def update_author(id, new_author) do
     with %Author{} = author <-
            Repo.get(Author, id),
-         changeset = Author.changeset(author, new_author),
+         changeset = changeset(author, new_author),
          {:ok, updated_author} <- Repo.update(changeset) do
       {:ok, updated_author}
     else
@@ -73,7 +73,7 @@ defmodule AlchemistLibrary.Library.Author do
 
   def delete_author_by_name(name) do
     with %Author{} = author <-
-           Author.get_by_name(name),
+           get_by_name(name),
          {:ok, deleted_author} <- Repo.delete(author) do
       {:ok, deleted_author}
     else

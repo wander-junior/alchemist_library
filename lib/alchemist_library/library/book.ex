@@ -40,7 +40,7 @@ defmodule AlchemistLibrary.Library.Book do
   end
 
   def create_book(attrs) do
-    changeset = Book.changeset(%Book{}, attrs)
+    changeset = changeset(%Book{}, attrs)
 
     case Repo.insert(changeset) do
       {:ok, book} ->
@@ -97,8 +97,8 @@ defmodule AlchemistLibrary.Library.Book do
   end
 
   def update_book(id, new_book) do
-    with %Book{} = book <- Repo.get(Library.Book, id),
-         changeset = Book.changeset(book, new_book),
+    with %Book{} = book <- Repo.get(Book, id),
+         changeset = changeset(book, new_book),
          {:ok, updated_book} <- Repo.update(changeset),
          preloaded_book <- Repo.preload(updated_book, [:author, :category]) do
       {:ok, preloaded_book}
@@ -112,9 +112,10 @@ defmodule AlchemistLibrary.Library.Book do
   end
 
   def delete_book(id) do
-    with %Book{} = book <- Repo.get(Library.Book, id),
+    with %Book{} = book <- Repo.get(Book, id),
          {:ok, deleted_book} <- Repo.delete(book),
          preloaded_book <- Repo.preload(deleted_book, [:author, :category]) do
+      Cache.delete({:book_by_title, book.title})
       {:ok, preloaded_book}
     else
       nil ->
