@@ -75,6 +75,7 @@ defmodule AlchemistLibrary.Library.Author do
     with %Author{} = author <-
            get_by_name(name),
          {:ok, deleted_author} <- Repo.delete(author) do
+      Cache.delete({:author_by_name, name})
       {:ok, deleted_author}
     else
       nil ->
