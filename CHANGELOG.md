@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add cache on get route
+- Add Books, Authors and Categories routers
 - Add Books, Authors and Categories modules
 - Create Books Migration
 - Create Author Migration
