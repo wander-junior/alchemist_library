@@ -11,7 +11,7 @@ defmodule AlchemistLibrary.AuthorRouter do
   end
 
   get "/get" do
-    AlchemistLibrary.AuthorController.read(conn, conn.body_params)
+    AlchemistLibrary.AuthorController.read(conn, conn.params)
   end
 
   get "/get_all" do
