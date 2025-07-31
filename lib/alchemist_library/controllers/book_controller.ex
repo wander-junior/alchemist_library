@@ -36,7 +36,7 @@ defmodule AlchemistLibrary.BookController do
       |> build_price_filters()
 
     books =
-      Book.get_by_authors_name(params.name, filters)
+      Book.get_by_authors_name(params["name"], filters)
 
     JsonResponse.send(conn, 200, books)
   end
