@@ -1,2 +1,0 @@
-defmodule AlchemistLibraryTest do
-end

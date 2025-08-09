@@ -4,18 +4,24 @@ defmodule AlchemistLibrary.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   @impl true
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: AlchemistLibrary.Worker.start_link(arg)
       # {AlchemistLibrary.Worker, arg}
-      Library.Repo
+      AlchemistLibrary.Cache,
+      AlchemistLibrary.Repo,
+      {Plug.Cowboy, scheme: :http, plug: AlchemistLibrary.Router, options: [port: 8080]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: AlchemistLibrary.Supervisor]
+
+    Logger.info("Starting application...")
+
     Supervisor.start_link(children, opts)
   end
 end
